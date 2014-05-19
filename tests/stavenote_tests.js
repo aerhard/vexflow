@@ -73,6 +73,8 @@ Vex.Flow.Test.StaveNote.Start = function() {
   
   Vex.Flow.Test.runTest("Beam and Dot Placement - Stem Up", Vex.Flow.Test.StaveNote.dotsAndBeamsUp);
   Vex.Flow.Test.runTest("Beam and Dot Placement - Stem Down", Vex.Flow.Test.StaveNote.dotsAndBeamsDown);
+  Vex.Flow.Test.runTest("Center Aligned Note", Vex.Flow.Test.StaveNote.centerAlignedRest);
+  Vex.Flow.Test.runTest("Center Aligned Note - Multi Voice", Vex.Flow.Test.StaveNote.centerAlignedMultiVoice);
 }
 
 Vex.Flow.Test.StaveNote.ticks = function(options) {
@@ -1023,3 +1025,82 @@ Vex.Flow.Test.StaveNote.dotsAndBeamsUp = function(options, contextBuilder) {
 
   ok(true, "Full Dot");
 }
+
+Vex.Flow.Test.StaveNote.centerAlignedRest = function(options, contextBuilder) {
+  var ctx = new contextBuilder(options.canvas_sel, 400, 160);
+  ctx.scale(1.0, 1.0); ctx.setFillStyle("#221"); ctx.setStrokeStyle("#221");
+  var stave = new Vex.Flow.Stave(10, 10, 350);
+
+  stave.addClef('treble');
+  stave.addTimeSignature('4/4');
+
+  stave.setContext(ctx);
+  stave.draw();
+
+  function newNote(note_struct) { return new Vex.Flow.StaveNote(note_struct); }
+
+  var notes0 = [
+    { keys: ["b/4"], duration: "1r", align_center: true}
+  ].map(newNote);
+
+  var voice0 = new Vex.Flow.Voice(Vex.Flow.TIME4_4).setStrict(false);
+  voice0.addTickables(notes0);
+
+  var formatter = new Vex.Flow.Formatter().joinVoices([voice0]).formatToStave([voice0], stave);
+
+  voice0.draw(ctx, stave);
+
+  ok(true);
+};
+
+Vex.Flow.Test.StaveNote.centerAlignedMultiVoice = function(options, contextBuilder) {
+  var ctx = new contextBuilder(options.canvas_sel, 400, 160);
+  ctx.scale(1.0, 1.0); ctx.setFillStyle("#221"); ctx.setStrokeStyle("#221");
+  var stave = new Vex.Flow.Stave(10, 10, 350);
+
+  stave.addClef('treble');
+  stave.addTimeSignature('3/8');
+  
+  stave.setContext(ctx);
+  stave.draw();
+
+  function newNote(note_struct) { return new Vex.Flow.StaveNote(note_struct); }
+
+  // Create custom duration
+  var custom_duration = new Vex.Flow.Fraction(3, 8);
+
+  var notes0 = [
+    { keys: ["c/4"], duration: "1r", align_center: true, duration_override: custom_duration}
+  ].map(newNote);
+
+  var notes1 = [
+    { keys: ["b/4"], duration: "8"},
+    { keys: ["b/4"], duration: "8"},
+    { keys: ["b/4"], duration: "8"},
+  ].map(newNote);
+
+  notes1[1].addAccidental(0, new Vex.Flow.Accidental('#'));
+
+  var TIME3_8 = {
+    num_beats: 3,
+    beat_value: 8,
+    resolution: Vex.Flow.RESOLUTION
+  };
+
+  var beam = new Vex.Flow.Beam(notes1);
+
+  var voice0 = new Vex.Flow.Voice(TIME3_8).setStrict(false);
+  voice0.addTickables(notes0);
+
+  var voice1 = new Vex.Flow.Voice(TIME3_8).setStrict(false);
+  voice1.addTickables(notes1);
+
+  var formatter = new Vex.Flow.Formatter().joinVoices([voice0, voice1]).formatToStave([voice0, voice1], stave);
+
+  voice0.draw(ctx, stave);
+  voice1.draw(ctx, stave);
+
+  beam.setContext(ctx).draw();
+
+  ok(true);
+};

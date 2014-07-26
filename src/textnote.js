@@ -144,7 +144,7 @@ Vex.Flow.TextNote = (function() {
       x_shift: 0,
       y_shift: 0
       // width: 10 // optional
-    },
+    }
   };
 
   // ## Prototype Methods

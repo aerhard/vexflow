@@ -7,7 +7,7 @@
 
 Vex.Flow.STEM_WIDTH = 1.5;
 Vex.Flow.STEM_HEIGHT = 32;
-Vex.Flow.STAVE_LINE_THICKNESS = 2;
+Vex.Flow.STAVE_LINE_THICKNESS = 1;
 
 Vex.Flow.clefProperties = function(clef) {
   if (!clef) throw new Vex.RERR("BadArgument", "Invalid clef: " + clef);

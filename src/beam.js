@@ -34,7 +34,7 @@ Vex.Flow.Beam = (function() {
       var i; // shared iterator
       var note;
 
-      this.stem_direction = 1;
+      this.stem_direction = Stem.UP;
 
       for (i = 0; i < notes.length; ++i) {
         note = notes[i];
@@ -44,30 +44,17 @@ Vex.Flow.Beam = (function() {
         }
       }
 
-      var stem_direction = -1;
-
+      var stem_direction = this.stem_direction;
       // Figure out optimal stem direction based on given notes
       if (auto_stem && notes[0].getCategory() === 'stavenotes')  {
-        // Auto Stem StaveNotes
-        this.min_line = 1000;
-
-        for (i = 0; i < notes.length; ++i) {
-          note = notes[i];
-          if (note.getKeyProps) {
-            var props = note.getKeyProps();
-            var center_line = (props[0].line + props[props.length - 1].line) / 2;
-            this.min_line = Math.min(center_line, this.min_line);
-          }
-        }
-
-        if (this.min_line < 3) stem_direction = 1;
+        stem_direction = calculateStemDirection(notes);
       } else if (auto_stem && notes[0].getCategory() === 'tabnotes') {
         // Auto Stem TabNotes
         var stem_weight = notes.reduce(function(memo, note) {
           return memo + note.stem_direction;
         }, 0);
 
-        stem_direction = stem_weight > -1 ? 1 : -1;
+        stem_direction = stem_weight > -1 ? Stem.UP : Stem.DOWN;
       }
 
       // Apply stem directions and attach beam to notes
@@ -163,19 +150,19 @@ Vex.Flow.Beam = (function() {
           }
 
         }
-        
+
         var last_note = this.notes[this.notes.length - 1];
-        var first_last_slope = ((last_note.getStemExtents().topY - first_y_px) / 
+        var first_last_slope = ((last_note.getStemExtents().topY - first_y_px) /
                 (last_note.getStemX() - first_x_px));
         // most engraving books suggest aiming for a slope about half the angle of the
         // difference between the first and last notes' stem length;
-        var ideal_slope = first_last_slope / 2; 
+        var ideal_slope = first_last_slope / 2;
         var distance_from_ideal = Math.abs(ideal_slope - slope);
 
         // This tries to align most beams to something closer to the ideal_slope, but
         // doesn't go crazy. To disable, set this.render_options.slope_cost = 0
         var cost = this.render_options.slope_cost * distance_from_ideal +
-            Math.abs(total_stem_extension);     
+            Math.abs(total_stem_extension);
 
         // update state when a more ideal slope is found
         if (cost < min_cost) {
@@ -372,7 +359,7 @@ Vex.Flow.Beam = (function() {
 
         for (var j = 0; j < beam_lines.length; ++j) {
           var beam_line = beam_lines[j];
-          var first_x = beam_line.start - (this.stem_direction == -1 ? Vex.Flow.STEM_WIDTH/2:0);
+          var first_x = beam_line.start - (this.stem_direction == Stem.DOWN ? Vex.Flow.STEM_WIDTH/2:0);
           var first_y = this.getSlopeY(first_x, first_x_px, first_y_px, this.slope);
 
           var last_x = beam_line.end +
@@ -426,8 +413,23 @@ Vex.Flow.Beam = (function() {
     }
   };
 
+  function calculateStemDirection(notes) {
+    var lineSum = 0;
+    notes.forEach(function(note) {
+      if (note.keyProps) {
+        note.keyProps.forEach(function(keyProp){
+          lineSum += (keyProp.line - 3);
+        });
+      }
+    });
+
+    if (lineSum >= 0)
+      return Stem.DOWN;
+    return Stem.UP;
+  }
+
   // ## Static Methods
-  // 
+  //
   // Gets the default beam groups for a provided time signature.
   // Attempts to guess if the time signature is not found in table.
   // Currently this is fairly naive.
@@ -483,7 +485,7 @@ Vex.Flow.Beam = (function() {
 
   // A helper function to automatically build basic beams for a voice. For more
   // complex auto-beaming use `Beam.generateBeams()`.
-  // 
+  //
   // Parameters:
   // * `voice` - The voice to generate the beams for
   // * `stem_direction` - A stem direction to apply to the entire voice
@@ -495,9 +497,9 @@ Vex.Flow.Beam = (function() {
     });
   };
 
-  // A helper function to autimatically build beams for a voice with 
+  // A helper function to autimatically build beams for a voice with
   // configuration options.
-  // 
+  //
   // Example configuration object:
   //
   // ```
@@ -509,7 +511,7 @@ Vex.Flow.Beam = (function() {
   //   show_stemlets: false
   // };
   // ```
-  // 
+  //
   // Parameters:
   // * `notes` - An array of notes to create the beams for
   // * `config` - The configuration object
@@ -519,7 +521,7 @@ Vex.Flow.Beam = (function() {
   //    * `beam_middle_only` - Set to `true` to only beam rests in the middle of the beat
   //    * `show_stemlets` - Set to `true` to draw stemlets for rests
   //    * `maintain_stem_directions` - Set to `true` to not apply new stem directions
-  // 
+  //
   Beam.generateBeams = function(notes, config) {
 
     if (!config) config = {};
@@ -568,19 +570,17 @@ Vex.Flow.Beam = (function() {
         }
 
         currentGroup.push(unprocessedNote);
-        var ticksPerGroup = tickGroups[currentTickGroup].value();
-        var totalTicks = getTotalTicks(currentGroup).value();
+        var ticksPerGroup = tickGroups[currentTickGroup].clone();
+        var totalTicks = getTotalTicks(currentGroup);
 
         // Double the amount of ticks in a group, if it's an unbeamable tuplet
-        var unbeamable = false;
-        if (Vex.Flow.durationToInteger(unprocessedNote.duration) < 8
-            && unprocessedNote.tuplet) {
-          ticksPerGroup *= 2;
-          unbeamable = true;
+        var unbeamable = Vex.Flow.durationToNumber(unprocessedNote.duration) < 8;
+        if (unbeamable && unprocessedNote.tuplet) {
+          ticksPerGroup.numerator *= 2;
         }
 
         // If the note that was just added overflows the group tick total
-        if (totalTicks > ticksPerGroup) {
+        if (totalTicks.greaterThan(ticksPerGroup)) {
           // If the overflow note can be beamed, start the next group
           // with it. Unbeamable notes leave the group overflowed.
           if (!unbeamable) {
@@ -589,7 +589,7 @@ Vex.Flow.Beam = (function() {
           noteGroups.push(currentGroup);
           currentGroup = nextGroup;
           nextTickGroup();
-        } else if (totalTicks == ticksPerGroup) {
+        } else if (totalTicks.equals(ticksPerGroup)) {
           noteGroups.push(currentGroup);
           currentGroup = nextGroup;
           nextTickGroup();
@@ -673,9 +673,13 @@ Vex.Flow.Beam = (function() {
         var stemDirection;
         if (config.maintain_stem_directions) {
           var note = findFirstNote(group);
-          stemDirection = note ? note.getStemDirection() : 1;
+          stemDirection = note ? note.getStemDirection() : Stem.UP;
         } else {
-          stemDirection = calculateStemDirection(group);
+          if (config.stem_direction){
+            stemDirection = config.stem_direction;
+          } else {
+            stemDirection = calculateStemDirection(group);
+          }
         }
         applyStemDirection(group, stemDirection);
       });
@@ -690,23 +694,6 @@ Vex.Flow.Beam = (function() {
       }
 
       return false;
-    }
-
-    function calculateStemDirection(group) {
-      if (config.stem_direction) return config.stem_direction;
-
-      var lineSum = 0;
-      group.forEach(function(note) {
-        if (note.keyProps) {
-          note.keyProps.forEach(function(keyProp){
-            lineSum += (keyProp.line - 2.5);
-          });
-        }
-      });
-
-      if (lineSum > 0)
-        return -1;
-      return 1;
     }
 
     function applyStemDirection(group, direction) {
@@ -760,7 +747,7 @@ Vex.Flow.Beam = (function() {
       var tuplet = firstNote.tuplet;
 
       if (firstNote.beam) tuplet.setBracketed(false);
-      if (firstNote.stem_direction == -1) {
+      if (firstNote.stem_direction == Stem.DOWN) {
         tuplet.setTupletLocation(Vex.Flow.Tuplet.LOCATION_BOTTOM);
       }
     });

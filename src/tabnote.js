@@ -48,7 +48,12 @@ Vex.Flow.TabNote = (function() {
       }
 
       this.buildStem();
-      this.setStemDirection(Stem.UP);
+
+      if (tab_struct.stem_direction){
+        this.setStemDirection(tab_struct.stem_direction);
+      } else {
+        this.setStemDirection(Stem.UP);
+      }
 
       // Renders parenthesis around notes
       this.ghost = false;
@@ -387,7 +392,7 @@ Vex.Flow.TabNote = (function() {
 
   // Gets groups of points that outline the partial stem lines
   // between fret positions
-  // 
+  //
   // Parameters:
   // * stem_Y - The `y` coordinate the stem is located on
   // * unused_strings - An array of groups of unused strings

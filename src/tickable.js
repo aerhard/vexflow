@@ -26,6 +26,9 @@ Vex.Flow.Tickable = (function() {
       this.tuplet = null;
       this.align_center = false;
 
+      this.align_center = false;
+      this.center_x_shift = 0; // Shift from tick context if center aligned
+
       // This flag tells the formatter to ignore this tickable during
       // formatting and justification. It is set by tickables such as BarNote.
       this.ignore_ticks = false;
@@ -38,6 +41,19 @@ Vex.Flow.Tickable = (function() {
     shouldIgnoreTicks: function() { return this.ignore_ticks; },
     getWidth: function() { return this.width; },
     setXShift: function(x) { this.x_shift = x; },
+    getCenterXShift: function() {
+      if (this.isCenterAligned()) {
+        return this.center_x_shift;
+      }
+
+      return 0;
+    },
+
+    isCenterAligned: function() { return this.align_center; },
+    setCenterAlignment: function(align_center) {
+      this.align_center = align_center;
+      return this;
+    },
 
     isCenterAligned: function() { return this.align_center; },
     setCenterAlignment: function(align_center) {

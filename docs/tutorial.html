@@ -144,12 +144,12 @@
       2D drawing interface, which is modeled on HTML5 Canvas.
       <p/>
       We then create a new <code>Vex.Flow.Stave</code> positioned at
-      <code>0, 0</code> with a width of <code>500</code> pixels.
+      <code>10, 0</code> with a width of <code>500</code> pixels.
       <p/>
       We pass the context to the stave and call <code>draw</code>, which
       renders the stave on the context.
       <p/>
-      Notice that the stave is not exactly drawn in position <code>0, 0</code>.
+      Notice that the stave is not exactly drawn in position <code>10, 0</code>.
       This is because it reserves some head-room for higher notes.
       <p/>
     </div>
@@ -395,8 +395,21 @@
   Vex.Flow.Formatter.FormatAndDraw(ctx, stave, notes);
 </script>
     </div>
+
     Above, the accidentals are positioned such that they don't overlap but
     maintain their X-relation to the associated note.
+
+      <p>
+      Creating each accidental explictly can be annoying. Fortunately, VexFlow
+      provides an auto-formatting method called 
+      <code>Accidental.applyAccidentals()</code> which determines the 
+      accidentals to render on an array of voices. You can optionally provide a
+      key signature as well.
+      </p>
+
+      <code>
+        Accidental.applyAccidentals([voice], "Cb");
+      </code>
     </div>
 
     <h2>Step 3.5: An Interlude</h2>

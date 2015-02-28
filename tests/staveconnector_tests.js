@@ -7,58 +7,47 @@ Vex.Flow.Test.StaveConnector = {}
 
 Vex.Flow.Test.StaveConnector.Start = function() {
   module("StaveConnector");
-  Vex.Flow.Test.runTest("StaveConnector Single Draw Test (Canvas)",
+  Vex.Flow.Test.runTests("StaveConnector Single Draw Test",
     Vex.Flow.Test.StaveConnector.drawSingle);
-  Vex.Flow.Test.runRaphaelTest("StaveConnector Single Draw Test (Raphael)",
-    Vex.Flow.Test.StaveConnector.drawSingle);
-  Vex.Flow.Test.runTest("StaveConnector Single Both Sides Test (Canvas)",
+  
+  Vex.Flow.Test.runTests("StaveConnector Single Draw Test, 1px Stave Line Thickness",
+    Vex.Flow.Test.StaveConnector.drawSingle1pxBarlines);
+  Vex.Flow.Test.runTests("StaveConnector Single Both Sides Test",
     Vex.Flow.Test.StaveConnector.drawSingleBoth);
-  Vex.Flow.Test.runRaphaelTest("StaveConnector Single Both Sides Test (Raphael)",
-    Vex.Flow.Test.StaveConnector.drawSingleBoth);
-  Vex.Flow.Test.runTest("StaveConnector Double Draw Test (Canvas)",
+  
+  Vex.Flow.Test.runTests("StaveConnector Double Draw Test",
     Vex.Flow.Test.StaveConnector.drawDouble);
-  Vex.Flow.Test.runRaphaelTest("StaveConnector Double Draw Test (Raphael)",
-    Vex.Flow.Test.StaveConnector.drawDouble);
-  Vex.Flow.Test.runTest("StaveConnector Bold Double Line Left Draw Test (Canvas)",
+  
+  Vex.Flow.Test.runTests("StaveConnector Bold Double Line Left Draw Test",
     Vex.Flow.Test.StaveConnector.drawRepeatBegin);
-  Vex.Flow.Test.runRaphaelTest("StaveConnector Bold Double Line Left Draw Test (Raphael)",
-    Vex.Flow.Test.StaveConnector.drawRepeatBegin);
-  Vex.Flow.Test.runTest("StaveConnector Bold Double Line Right Draw Test (Canvas)",
+  
+  Vex.Flow.Test.runTests("StaveConnector Bold Double Line Right Draw Test",
     Vex.Flow.Test.StaveConnector.drawRepeatEnd);
-  Vex.Flow.Test.runRaphaelTest("StaveConnector Bold Double Line Right Draw Test (Raphael)",
-    Vex.Flow.Test.StaveConnector.drawRepeatEnd);
-  Vex.Flow.Test.runTest("StaveConnector Thin Double Line Right Draw Test (Canvas)",
+  
+  Vex.Flow.Test.runTests("StaveConnector Thin Double Line Right Draw Test",
     Vex.Flow.Test.StaveConnector.drawThinDouble);
-  Vex.Flow.Test.runRaphaelTest("StaveConnector Thin Double Line Right Draw Test (Raphael)",
-    Vex.Flow.Test.StaveConnector.drawThinDouble);
-  Vex.Flow.Test.runTest("StaveConnector Bold Double Lines Overlapping Draw Test (Canvas)",
+  
+  Vex.Flow.Test.runTests("StaveConnector Bold Double Lines Overlapping Draw Test",
     Vex.Flow.Test.StaveConnector.drawRepeatAdjacent);
-  Vex.Flow.Test.runRaphaelTest("StaveConnector Bold Double Lines Overlapping Draw Test (Raphael)",
-    Vex.Flow.Test.StaveConnector.drawRepeatAdjacent);
-  Vex.Flow.Test.runTest("StaveConnector Bold Double Lines Offset Draw Test (Canvas)",
+  
+  Vex.Flow.Test.runTests("StaveConnector Bold Double Lines Offset Draw Test",
     Vex.Flow.Test.StaveConnector.drawRepeatOffset);
-  Vex.Flow.Test.runRaphaelTest("StaveConnector Bold Double Lines Offset Draw Test (Raphael)",
-    Vex.Flow.Test.StaveConnector.drawRepeatOffset);
-  Vex.Flow.Test.runTest("StaveConnector Bold Double Lines Offset Draw Test 2 (Canvas)",
+  
+  Vex.Flow.Test.runTests("StaveConnector Bold Double Lines Offset Draw Test 2",
     Vex.Flow.Test.StaveConnector.drawRepeatOffset2);
-  Vex.Flow.Test.runRaphaelTest("StaveConnector Bold Double Lines Offset Draw Test 2 (Raphael)",
-    Vex.Flow.Test.StaveConnector.drawRepeatOffset2);
-  Vex.Flow.Test.runTest("StaveConnector Brace Draw Test (Canvas)",
+  
+  Vex.Flow.Test.runTests("StaveConnector Brace Draw Test",
     Vex.Flow.Test.StaveConnector.drawBrace);
-  Vex.Flow.Test.runRaphaelTest("StaveConnector Brace Draw Test (Raphael)",
-    Vex.Flow.Test.StaveConnector.drawBrace);
-  Vex.Flow.Test.runTest("StaveConnector Brace Wide Draw Test (Canvas)",
+  
+  Vex.Flow.Test.runTests("StaveConnector Brace Wide Draw Test",
     Vex.Flow.Test.StaveConnector.drawBraceWide);
-  Vex.Flow.Test.runRaphaelTest("StaveConnector Wide Brace Draw Test (Raphael)",
-    Vex.Flow.Test.StaveConnector.drawBraceWide);
-  Vex.Flow.Test.runTest("StaveConnector Bracket Draw Test (Canvas)",
+  
+  Vex.Flow.Test.runTests("StaveConnector Bracket Draw Test",
     Vex.Flow.Test.StaveConnector.drawBracket);
-  Vex.Flow.Test.runRaphaelTest("StaveConnector Bracket Draw Test (Raphael)",
-    Vex.Flow.Test.StaveConnector.drawBracket);
-  Vex.Flow.Test.runTest("StaveConnector Combined Draw Test (Canvas)",
+  
+  Vex.Flow.Test.runTests("StaveConnector Combined Draw Test",
     Vex.Flow.Test.StaveConnector.drawCombined);
-  Vex.Flow.Test.runRaphaelTest("StaveConnector Combined Draw Test (Raphael)",
-    Vex.Flow.Test.StaveConnector.drawCombined);
+  
 }
 
 Vex.Flow.Test.StaveConnector.drawSingle = function(options, contextBuilder) {
@@ -73,6 +62,24 @@ Vex.Flow.Test.StaveConnector.drawSingle = function(options, contextBuilder) {
   stave.draw();
   stave2.draw();
   connector.draw();
+
+  ok(true, "all pass");
+}
+
+Vex.Flow.Test.StaveConnector.drawSingle1pxBarlines = function(options, contextBuilder) {
+  Vex.Flow.STAVE_LINE_THICKNESS = 1;
+  var ctx = new contextBuilder(options.canvas_sel, 400, 300);
+  var stave = new Vex.Flow.Stave(25, 10, 300);
+  var stave2 = new Vex.Flow.Stave(25, 120, 300);
+  stave.setContext(ctx);
+  stave2.setContext(ctx);
+  var connector = new Vex.Flow.StaveConnector(stave, stave2);
+  connector.setType(Vex.Flow.StaveConnector.type.SINGLE);
+  connector.setContext(ctx);
+  stave.draw();
+  stave2.draw();
+  connector.draw();
+  Vex.Flow.STAVE_LINE_THICKNESS = 2;
 
   ok(true, "all pass");
 }

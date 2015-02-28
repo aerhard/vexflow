@@ -7,25 +7,25 @@ Vex.Flow.Test.Beam = {}
 
 Vex.Flow.Test.Beam.Start = function() {
   module("Beam");
-  Vex.Flow.Test.runTest("Simple Beam", Vex.Flow.Test.Beam.simple);
-  Vex.Flow.Test.runTest("Multi Beam", Vex.Flow.Test.Beam.multi);
-  Vex.Flow.Test.runTest("Sixteenth Beam", Vex.Flow.Test.Beam.sixteenth);
-  Vex.Flow.Test.runTest("Slopey Beam", Vex.Flow.Test.Beam.slopey);
-  Vex.Flow.Test.runTest("Automatic Beam", Vex.Flow.Test.Beam.auto);
-  Vex.Flow.Test.runTest("Mixed Beam 1", Vex.Flow.Test.Beam.mixed);
-  Vex.Flow.Test.runTest("Mixed Beam 2", Vex.Flow.Test.Beam.mixed2);
-  Vex.Flow.Test.runTest("Dotted Beam", Vex.Flow.Test.Beam.dotted);
-  Vex.Flow.Test.runTest("Close Trade-offs Beam", Vex.Flow.Test.Beam.tradeoffs);
-  Vex.Flow.Test.runTest("Insane Beam", Vex.Flow.Test.Beam.insane);
-  Vex.Flow.Test.runTest("Lengthy Beam", Vex.Flow.Test.Beam.lenghty);
-  Vex.Flow.Test.runTest("Outlier Beam", Vex.Flow.Test.Beam.outlier);
-  Vex.Flow.Test.runTest("Break Secondary Beams", Vex.Flow.Test.Beam.breakSecondaryBeams);
-  Vex.Flow.Test.runTest("TabNote Beams Up", Vex.Flow.Test.Beam.tabBeamsUp);
-  Vex.Flow.Test.runTest("TabNote Beams Down", Vex.Flow.Test.Beam.tabBeamsDown);
-  Vex.Flow.Test.runTest("TabNote Auto Create Beams", Vex.Flow.Test.Beam.autoTabBeams);
-  Vex.Flow.Test.runTest("TabNote Beams Auto Stem", Vex.Flow.Test.Beam.tabBeamsAutoStem);
-  Vex.Flow.Test.runTest("Complex Beams with Annotations", Vex.Flow.Test.Beam.complexWithAnnotation);
-  Vex.Flow.Test.runTest("Complex Beams with Articulations", Vex.Flow.Test.Beam.complexWithArticulation);
+  Vex.Flow.Test.runTests("Simple Beam", Vex.Flow.Test.Beam.simple);
+  Vex.Flow.Test.runTests("Multi Beam", Vex.Flow.Test.Beam.multi);
+  Vex.Flow.Test.runTests("Sixteenth Beam", Vex.Flow.Test.Beam.sixteenth);
+  Vex.Flow.Test.runTests("Slopey Beam", Vex.Flow.Test.Beam.slopey);
+  Vex.Flow.Test.runTests("Auto-stemmed Beam", Vex.Flow.Test.Beam.autoStem);
+  Vex.Flow.Test.runTests("Mixed Beam 1", Vex.Flow.Test.Beam.mixed);
+  Vex.Flow.Test.runTests("Mixed Beam 2", Vex.Flow.Test.Beam.mixed2);
+  Vex.Flow.Test.runTests("Dotted Beam", Vex.Flow.Test.Beam.dotted);
+  Vex.Flow.Test.runTests("Close Trade-offs Beam", Vex.Flow.Test.Beam.tradeoffs);
+  Vex.Flow.Test.runTests("Insane Beam", Vex.Flow.Test.Beam.insane);
+  Vex.Flow.Test.runTests("Lengthy Beam", Vex.Flow.Test.Beam.lenghty);
+  Vex.Flow.Test.runTests("Outlier Beam", Vex.Flow.Test.Beam.outlier);
+  Vex.Flow.Test.runTests("Break Secondary Beams", Vex.Flow.Test.Beam.breakSecondaryBeams);
+  Vex.Flow.Test.runTests("TabNote Beams Up", Vex.Flow.Test.Beam.tabBeamsUp);
+  Vex.Flow.Test.runTests("TabNote Beams Down", Vex.Flow.Test.Beam.tabBeamsDown);
+  Vex.Flow.Test.runTests("TabNote Auto Create Beams", Vex.Flow.Test.Beam.autoTabBeams);
+  Vex.Flow.Test.runTests("TabNote Beams Auto Stem", Vex.Flow.Test.Beam.tabBeamsAutoStem);
+  Vex.Flow.Test.runTests("Complex Beams with Annotations", Vex.Flow.Test.Beam.complexWithAnnotation);
+  Vex.Flow.Test.runTests("Complex Beams with Articulations", Vex.Flow.Test.Beam.complexWithArticulation);
 }
 
 Vex.Flow.Test.Beam.beamNotes = function(notes, stave, ctx) {
@@ -284,7 +284,7 @@ Vex.Flow.Test.Beam.slopey = function(options, contextBuilder) {
   ok(true, "Slopey Test");
 }
 
-Vex.Flow.Test.Beam.auto = function(options, contextBuilder) {
+Vex.Flow.Test.Beam.autoStem = function(options, contextBuilder) {
   var ctx = new contextBuilder(options.canvas_sel, 350, 140);
   ctx.scale(0.9, 0.9); ctx.fillStyle = "#221"; ctx.strokeStyle = "#221";
   ctx.font = " 10pt Arial";
@@ -295,29 +295,53 @@ Vex.Flow.Test.Beam.auto = function(options, contextBuilder) {
   function newAcc(type) { return new Vex.Flow.Accidental(type); }
 
   var notes = [
-    newNote({ keys: ["c/4"], stem_direction: 1, duration: "8"}),
-    newNote({ keys: ["f/5"], stem_direction: 1, duration: "8"}),
-    newNote({ keys: ["d/5"], stem_direction: 1, duration: "8"}),
-    newNote({ keys: ["g/5"], stem_direction: 1, duration: "8"}),
-    newNote({ keys: ["d/6"], stem_direction: 1, duration: "8"}),
-    newNote({ keys: ["f/5"], stem_direction: 1, duration: "8"}),
-    newNote({ keys: ["d/5"], stem_direction: 1, duration: "8"}),
-    newNote({ keys: ["g/5"], stem_direction: 1, duration: "8"})
+    newNote({ keys: ["a/4"], duration: "8"}),
+    newNote({ keys: ["b/4"], duration: "8"}),
+    newNote({ keys: ["g/4"], duration: "8"}),
+    newNote({ keys: ["c/5"], duration: "8"}),
+    newNote({ keys: ["f/4"], duration: "8"}),
+    newNote({ keys: ["d/5"], duration: "8"}),
+    newNote({ keys: ["e/4"], duration: "8"}),
+    newNote({ keys: ["e/5"], duration: "8"}),
+    newNote({ keys: ["b/4"], duration: "8"}),
+    newNote({ keys: ["b/4"], duration: "8"}),
+    newNote({ keys: ["g/4"], duration: "8"}),
+    newNote({ keys: ["d/5"], duration: "8"})
   ];
 
   var voice = new Vex.Flow.Voice(Vex.Flow.Test.TIME4_4);
+  voice.setStrict(false);
   voice.addTickables(notes);
 
   var formatter = new Vex.Flow.Formatter().joinVoices([voice]).
     format([voice], 300);
-  var beam1_1 = new Vex.Flow.Beam(notes.slice(0, 4), true);
-  var beam1_2 = new Vex.Flow.Beam(notes.slice(4, 8), true);
+
+  var beam1 = new Vex.Flow.Beam(notes.slice(0, 2), true);
+  var beam2 = new Vex.Flow.Beam(notes.slice(2, 4), true);
+  var beam3 = new Vex.Flow.Beam(notes.slice(4, 6), true);
+  var beam4 = new Vex.Flow.Beam(notes.slice(6, 8), true);
+  var beam5 = new Vex.Flow.Beam(notes.slice(8, 10), true);
+  var beam6 = new Vex.Flow.Beam(notes.slice(10, 12), true);
+
+  var UP = Vex.Flow.Stem.UP;
+  var DOWN = Vex.Flow.Stem.DOWN;
+
+  equal(beam1.stem_direction, UP);
+  equal(beam2.stem_direction, UP);
+  equal(beam3.stem_direction, UP);
+  equal(beam4.stem_direction, UP);
+  equal(beam5.stem_direction, DOWN);
+  equal(beam6.stem_direction, DOWN);
 
   voice.draw(ctx, stave);
-  beam1_1.setContext(ctx).draw();
-  beam1_2.setContext(ctx).draw();
+  beam1.setContext(ctx).draw();
+  beam2.setContext(ctx).draw();
+  beam3.setContext(ctx).draw();
+  beam4.setContext(ctx).draw();
+  beam5.setContext(ctx).draw();
+  beam6.setContext(ctx).draw();
 
-  ok(true, "Autobeam Test");
+  ok(true, "AutoStem Beam Test");
 }
 
 Vex.Flow.Test.Beam.mixed = function(options, contextBuilder) {

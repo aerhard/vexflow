@@ -8,17 +8,17 @@ Vex.Flow.Test.ThreeVoices = {};
 
 Vex.Flow.Test.ThreeVoices.Start = function() {
   module("Rests");
-  Vex.Flow.Test.runTest("Three Voices - #1",
+  Vex.Flow.Test.runTests("Three Voices - #1",
       Vex.Flow.Test.ThreeVoices.threevoices);
-  Vex.Flow.Test.runTest("Three Voices - #2 Complex",
+  Vex.Flow.Test.runTests("Three Voices - #2 Complex",
       Vex.Flow.Test.ThreeVoices.threevoices2);
-  Vex.Flow.Test.runTest("Three Voices - #3",
+  Vex.Flow.Test.runTests("Three Voices - #3",
       Vex.Flow.Test.ThreeVoices.threevoices3);
-  Vex.Flow.Test.runTest("Auto Adjust Rest Positions - Two Voices",
+  Vex.Flow.Test.runTests("Auto Adjust Rest Positions - Two Voices",
       Vex.Flow.Test.ThreeVoices.autoresttwovoices);
-  Vex.Flow.Test.runTest("Auto Adjust Rest Positions - Three Voices #1",
+  Vex.Flow.Test.runTests("Auto Adjust Rest Positions - Three Voices #1",
       Vex.Flow.Test.ThreeVoices.autorestthreevoices);
-  Vex.Flow.Test.runTest("Auto Adjust Rest Positions - Three Voices #2",
+  Vex.Flow.Test.runTests("Auto Adjust Rest Positions - Three Voices #2",
       Vex.Flow.Test.ThreeVoices.autorestthreevoices2);
 };
 
@@ -330,7 +330,7 @@ Vex.Flow.Test.ThreeVoices.autoresttwovoices = function(options, contextBuilder) 
   Vex.Debug = false;
   var formatter = new Vex.Flow.Formatter().
     joinVoices([voice, voice1, voice2]).
-    format([voice, voice1, voice2], 350, {align_rests: true});
+    format([voice, voice1, voice2], 350, {align_rests: false});
 
   voice.draw(c, stave);
   voice1.draw(c, stave);
@@ -446,7 +446,7 @@ Vex.Flow.Test.ThreeVoices.autorestthreevoices = function(options, contextBuilder
   Vex.Debug = false;
   var formatter = new Vex.Flow.Formatter().
     joinVoices([voice, voice1, voice2, voice3]).
-    format([voice, voice1, voice2, voice3], 350, {align_rests: true});
+    format([voice, voice1, voice2, voice3], 350, {align_rests: false});
 
   voice.draw(c, stave);
   voice1.draw(c, stave);
@@ -558,7 +558,7 @@ Vex.Flow.Test.ThreeVoices.autorestthreevoices2 = function(options, contextBuilde
   Vex.Debug = false;
   var formatter = new Vex.Flow.Formatter().
     joinVoices([voice, voice1, voice2, voice3]).
-    format([voice, voice1, voice2, voice3], 400, {align_rests: true});
+    format([voice, voice1, voice2, voice3], 400, {align_rests: false});
 
   voice.draw(c, stave);
   voice1.draw(c, stave);

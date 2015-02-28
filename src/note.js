@@ -22,6 +22,7 @@ Vex.Flow.Note = (function() {
   function Note(note_struct) {
     if (arguments.length > 0) this.init(note_struct);
   }
+  Note.CATEGORY = "note";
 
   // ## Prototype Methods
   //
@@ -93,6 +94,10 @@ Vex.Flow.Note = (function() {
         this.setCenterAlignment(note_struct.align_center);
       }
 
+      if (note_struct.align_center) {
+        this.setCenterAlignment(note_struct.align_center);
+      }
+
       // The render surface.
       this.context = null;
       this.stave = null;
@@ -128,6 +133,11 @@ Vex.Flow.Note = (function() {
       this.context = this.stave.context;
       return this;
     },
+
+
+    // `Note` is not really a modifier, but is used in
+    // a `ModifierContext`.
+    getCategory: function() { return this.constructor.CATEGORY; },
 
     // Set the rendering context for the note.
     setContext: function(context) { this.context = context; return this; },
@@ -277,9 +287,16 @@ Vex.Flow.Note = (function() {
       if (!this.tickContext) throw new Vex.RERR("NoTickContext",
           "Note needs a TickContext assigned for an X-Value");
 
-      // {osition note to left edge of tick context.
+      // Position note to left edge of tick context.
       var x = this.tickContext.getX();
-      if (this.stave) x += this.stave.getNoteStartX() + this.render_options.stave_padding;
+      if (this.stave) {
+        x += this.stave.getNoteStartX() + this.render_options.stave_padding;
+      }
+
+      if (this.isCenterAligned()){
+        x += this.getCenterXShift();
+      }
+
       return x;
     },
 

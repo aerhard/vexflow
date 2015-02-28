@@ -89,6 +89,10 @@ Vex.Flow.Note = (function() {
       this.preFormatted = false;  // Is this note preFormatted?
       this.ys = [];               // list of y coordinates for each note
                                   // we need to hold on to these for ties and beams.
+                                
+      if (note_struct.align_center) {
+        this.setCenterAlignment(note_struct.align_center);
+      }
 
       if (note_struct.align_center) {
         this.setCenterAlignment(note_struct.align_center);
@@ -288,7 +292,7 @@ Vex.Flow.Note = (function() {
       if (this.stave) {
         x += this.stave.getNoteStartX() + this.render_options.stave_padding;
       }
-      
+
       if (this.isCenterAligned()){
         x += this.getCenterXShift();
       }

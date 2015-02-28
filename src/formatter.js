@@ -529,6 +529,12 @@ Vex.Flow.Formatter = (function() {
         var accumulated_space = 0;
         prev_tick = 0;
 
+          var setCenter = function(tickable) {
+              // tickable.x_shift = center_x - context.getX();
+              //tickable.x_shift = (justifyWidth - tickable.getWidth()) / 2;
+              tickable.center_x_shift = center_x - context.getX();
+          };
+
         for (i = 0; i < contextList.length; ++i) {
           tick = contextList[i];
           context = contextMap[tick];
@@ -539,15 +545,13 @@ Vex.Flow.Formatter = (function() {
 
           // Move center aligned tickables to middle
           var centeredTickables = context.getCenterAlignedTickables();
-          centeredTickables.forEach(function(tickable) {
-            tickable.center_x_shift = center_x - context.getX();
-          });
+          centeredTickables.forEach(setCenter);
         }
       }
     },
 
     // This is the top-level call for all formatting logic completed
-    // after `x` *and* `y` values have been computed for the notes 
+    // after `x` *and* `y` values have been computed for the notes
     // in the voices.
     postFormat: function() {
       // Postformat modifier contexts

@@ -47,7 +47,7 @@ Vex.Flow.Articulation = (function() {
     state.right_shift += width / 2;
     state.text_line = text_line;
     return true;
-  }
+  };
 
   // ## Prototype Methods
   Vex.Inherit(Articulation, Modifier, {
@@ -173,6 +173,10 @@ Vex.Flow.Articulation = (function() {
       L("Rendering articulation: ", this.articulation, glyph_x, glyph_y);
       Vex.Flow.renderGlyph(this.context, glyph_x, glyph_y,
                            this.render_options.font_scale, this.articulation.code);
+
+      this.x = glyph_x;
+      this.y = glyph_y;
+
     }
   });
 

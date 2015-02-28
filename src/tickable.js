@@ -55,12 +55,6 @@ Vex.Flow.Tickable = (function() {
       return this;
     },
 
-    isCenterAligned: function() { return this.align_center; },
-    setCenterAlignment: function(align_center) {
-      this.align_center = align_center;
-      return this;
-    },
-
     // Every tickable must be associated with a voice. This allows formatters
     // and preFormatter to associate them with the right modifierContexts.
     getVoice: function() {

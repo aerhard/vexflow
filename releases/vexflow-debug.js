@@ -1,5 +1,5 @@
 /**
- * VexFlow 1.2.27 built on 2015-01-24.
+ * VexFlow 1.2.27 built on 2015-02-28.
  * Copyright (c) 2010 Mohit Muthanna Cheppudira <mohit@muthanna.com>
  *
  * http://www.vexflow.com  http://github.com/0xfe/vexflow
@@ -517,7 +517,7 @@ Vex.Flow.Fraction = (function() {
 
 Vex.Flow.STEM_WIDTH = 1.5;
 Vex.Flow.STEM_HEIGHT = 32;
-Vex.Flow.STAVE_LINE_THICKNESS = 2;
+Vex.Flow.STAVE_LINE_THICKNESS = 1;
 
 Vex.Flow.clefProperties = function(clef) {
   if (!clef) throw new Vex.RERR("BadArgument", "Invalid clef: " + clef);
@@ -2832,6 +2832,7 @@ Vex.Flow.Tickable = (function() {
       this.preFormatted = false;
       this.postFormatted = false;
       this.tuplet = null;
+      this.align_center = false;
 
       this.align_center = false;
       this.center_x_shift = 0; // Shift from tick context if center aligned
@@ -3047,6 +3048,10 @@ Vex.Flow.Note = (function() {
       this.preFormatted = false;  // Is this note preFormatted?
       this.ys = [];               // list of y coordinates for each note
                                   // we need to hold on to these for ties and beams.
+                                
+      if (note_struct.align_center) {
+        this.setCenterAlignment(note_struct.align_center);
+      }
 
       if (note_struct.align_center) {
         this.setCenterAlignment(note_struct.align_center);
@@ -7915,6 +7920,12 @@ Vex.Flow.Formatter = (function() {
         var accumulated_space = 0;
         prev_tick = 0;
 
+          var setCenter = function(tickable) {
+              // tickable.x_shift = center_x - context.getX();
+              //tickable.x_shift = (justifyWidth - tickable.getWidth()) / 2;
+              tickable.center_x_shift = center_x - context.getX();
+          };
+
         for (i = 0; i < contextList.length; ++i) {
           tick = contextList[i];
           context = contextMap[tick];
@@ -7925,11 +7936,7 @@ Vex.Flow.Formatter = (function() {
 
           // Move center aligned tickables to middle
           var centeredTickables = context.getCenterAlignedTickables();
-
-          /*jshint -W083 */
-          centeredTickables.forEach(function(tickable) {
-            tickable.center_x_shift = center_x - context.getX();
-          });
+          centeredTickables.forEach(setCenter);
         }
       }
     },
@@ -9117,6 +9124,10 @@ Vex.Flow.Articulation = (function() {
       L("Rendering articulation: ", this.articulation, glyph_x, glyph_y);
       Vex.Flow.renderGlyph(this.context, glyph_x, glyph_y,
                            this.render_options.font_scale, this.articulation.code);
+
+      this.x = glyph_x;
+      this.y = glyph_y;
+
     }
   });
 
